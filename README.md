@@ -137,16 +137,16 @@ The primary interface. Every feature is accessible from the command line with hu
 
 | Command | Tier | What it does |
 |---|---|---|
-| `sextant decode <tx-hash>` | 1 | Decode the error, show root cause and fixes |
-| `sextant decode --raw <error-string>` | 1 | Decode a raw error from logs or test output |
-| `sextant inspect <tx-hash>` | 1 | Full TX context: arguments, auth, resources, fees |
-| `sextant trace <tx-hash>` | 2 | Replay and output the execution timeline |
-| `sextant profile <tx-hash>` | 2 | Resource consumption hotspot analysis |
-| `sextant diff <tx-hash>` | 2 | Ledger state before vs after |
-| `sextant replay <tx-hash> --interactive` | 3 | Launch the TUI debugger with breakpoints |
-| `sextant whatif <tx-hash> --modify <patch>` | 3 | Re-simulate with modified inputs, compare outcomes |
-| `sextant export <tx-hash> --format test` | 3 | Export as a regression test case |
-| `sextant db update` | — | Update the error taxonomy database |
+| `Prism decode <tx-hash>` | 1 | Decode the error, show root cause and fixes |
+| `Prism decode --raw <error-string>` | 1 | Decode a raw error from logs or test output |
+| `Prism inspect <tx-hash>` | 1 | Full TX context: arguments, auth, resources, fees |
+| `Prism trace <tx-hash>` | 2 | Replay and output the execution timeline |
+| `Prism profile <tx-hash>` | 2 | Resource consumption hotspot analysis |
+| `Prism diff <tx-hash>` | 2 | Ledger state before vs after |
+| `Prism replay <tx-hash> --interactive` | 3 | Launch the TUI debugger with breakpoints |
+| `Prism whatif <tx-hash> --modify <patch>` | 3 | Re-simulate with modified inputs, compare outcomes |
+| `Prism export <tx-hash> --format test` | 3 | Export as a regression test case |
+| `Prism db update` | — | Update the error taxonomy database |
 
 ### VS Code Extension
 
