@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 description = "Prism CLI — Soroban Transaction Debugger"
+build = "build.rs"
 
 [[bin]]
 name = "prism"
@@ -26,14 +27,20 @@ tokio = { workspace = true }
 # Serialization
 serde = { workspace = true }
 serde_json = { workspace = true }
+toml = { workspace = true }
 
 # TUI (Tier 3)
 ratatui = { workspace = true }
 crossterm = { workspace = true }
 
+# Paths
+directories = { workspace = true }
+
 # Logging
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
+
+url = "2"
 
 [dev-dependencies]
 assert_cmd = "2"
