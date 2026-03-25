@@ -13,7 +13,11 @@ pub struct TraceArgs {
     pub output_file: Option<String>,
 }
 
-pub async fn run(args: TraceArgs, network: &NetworkConfig, output_format: &str) -> anyhow::Result<()> {
+pub async fn run(
+    args: TraceArgs,
+    network: &NetworkConfig,
+    output_format: &str,
+) -> anyhow::Result<()> {
     let progress = indicatif::ProgressBar::new_spinner();
     progress.set_message("Reconstructing state and replaying transaction...");
     progress.enable_steady_tick(std::time::Duration::from_millis(100));

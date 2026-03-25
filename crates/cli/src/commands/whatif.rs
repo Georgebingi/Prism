@@ -13,7 +13,11 @@ pub struct WhatifArgs {
     pub modify: Option<String>,
 }
 
-pub async fn run(args: WhatifArgs, network: &NetworkConfig, output_format: &str) -> anyhow::Result<()> {
+pub async fn run(
+    args: WhatifArgs,
+    network: &NetworkConfig,
+    output_format: &str,
+) -> anyhow::Result<()> {
     println!("What-if simulation for {}", args.tx_hash);
 
     if let Some(patch_file) = &args.modify {
