@@ -7,7 +7,10 @@ use crate::output::renderers::render_fix_list;
 /// Print a diagnostic report in human-readable colored format.
 pub fn print_report(report: &DiagnosticReport) -> anyhow::Result<()> {
     // TODO: Implement rich colored terminal output
-    println!("Error: {} ({}:{})", report.error_name, report.error_category, report.error_code);
+    println!(
+        "Error: {} ({}:{})",
+        report.error_name, report.error_category, report.error_code
+    );
     println!("Summary: {}", report.summary);
     
     // Render and print the actionable fixes section
