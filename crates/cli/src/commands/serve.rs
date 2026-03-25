@@ -3,9 +3,8 @@
 use clap::Args;
 use std::path::PathBuf;
 use anyhow::Result;
-use std::fs;
 use std::io::prelude::*;
-use std::net::{ TcpListener, TcpStream };
+use std::net::{TcpListener, TcpStream};
 use std::thread;
 
 /// Serve the Prism Web UI dashboard
@@ -22,8 +21,9 @@ pub struct ServeArgs {
 
 pub async fn run(args: ServeArgs) -> Result<()> {
     // Check if web assets are built
-    let web_dist_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../apps/web/.next");
-
+    let web_dist_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../apps/web/.next");
+    
     if !web_dist_path.exists() {
         eprintln!("❌ Web UI assets not found at: {}", web_dist_path.display());
         eprintln!("💡 Please run: npm run build in apps/web directory");
@@ -32,8 +32,7 @@ pub async fn run(args: ServeArgs) -> Result<()> {
     }
 
     // Create a simple index.html for the dashboard
-    let index_html =
-        r#"<!DOCTYPE html>
+    let index_html = r#"<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +62,7 @@ pub async fn run(args: ServeArgs) -> Result<()> {
             <div class="logo">🔆 Prism</div>
             <div class="subtitle">Soroban Transaction Debugger</div>
         </div>
-
+        
         <div class="card">
             <h2>Transaction Analysis</h2>
             <div class="form-group">
@@ -99,18 +98,18 @@ pub async fn run(args: ServeArgs) -> Result<()> {
             const txHash = document.getElementById('tx-hash').value;
             const network = document.getElementById('network').value;
             const status = document.getElementById('status');
-
+            
             if (!txHash) {
                 status.textContent = 'Please enter a transaction hash';
                 status.className = 'status error';
                 status.style.display = 'block';
                 return;
             }
-
+            
             status.textContent = `Analyzing transaction ${txHash} on ${network}...`;
             status.className = 'status success';
             status.style.display = 'block';
-
+            
             // In a real implementation, this would call the Prism CLI backend
             setTimeout(() => {
                 status.textContent = 'Transaction analysis complete! (Demo mode - CLI integration pending)';
@@ -122,12 +121,12 @@ pub async fn run(args: ServeArgs) -> Result<()> {
 
     let addr = format!("{}:{}", args.host, args.port);
     let listener = TcpListener::bind(&addr)?;
-
+    
     println!("🌐 Prism dashboard serving at: http://{}", addr);
     println!("📊 Web UI available for transaction debugging");
     println!("🔧 Built from assets: {}", web_dist_path.display());
     println!("🔄 Press Ctrl+C to stop the server");
-
+    
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
@@ -141,21 +140,18 @@ pub async fn run(args: ServeArgs) -> Result<()> {
             }
         }
     }
-
+    
     Ok(())
 }
 
 fn handle_request(mut stream: TcpStream, index_html: &str) {
     let mut buffer = [0; 1024];
     stream.read(&mut buffer).unwrap();
-
+    
     let request = String::from_utf8_lossy(&buffer[..]);
     let request_line = request.lines().next().unwrap_or("");
-
-    let response = if
-        request_line.starts_with("GET / ") ||
-        request_line.starts_with("GET /index.html")
-    {
+    
+    let response = if request_line.starts_with("GET / ") || request_line.starts_with("GET /index.html") {
         format!(
             "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
             index_html.len(),
@@ -172,7 +168,7 @@ fn handle_request(mut stream: TcpStream, index_html: &str) {
             index_html
         )
     };
-
+    
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
