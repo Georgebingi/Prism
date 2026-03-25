@@ -41,10 +41,7 @@ pub async fn run(
             prism_cli::output::auth_tree::render_auth_tree(&trace)?
         }
     } else {
-        match output_format {
-            "json" => serde_json::to_string_pretty(&trace)?,
-            _ => format!("{trace:#?}"),
-        }
+        crate::output::format_trace(&trace, output_format)?
     };
 
     if let Some(path) = args.output_file {
