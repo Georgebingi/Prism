@@ -26,10 +26,6 @@ pub(crate) fn test(args: TokenStream, item: TokenStream) -> TokenStream {
             .map(ToTokens::into_token_stream)
             .unwrap_or_default()
             .into_iter();
-        // `Span` on stable Rust has a limitation that only points to the first
-        // token, not the whole tokens. We can work around this limitation by
-        // using the first/last span of the tokens like
-        // `syn::Error::new_spanned` does.
         let start = last_stmt.next().map_or_else(Span::call_site, |t| t.span());
         let end = last_stmt.last().map_or(start, |t| t.span());
         (start, end)

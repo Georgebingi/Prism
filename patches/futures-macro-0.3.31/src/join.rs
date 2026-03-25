@@ -101,9 +101,6 @@ pub(crate) fn try_join(input: TokenStream) -> TokenStream {
             {
                 __all_done = false;
             } else if #fut.as_mut().output_mut().unwrap().is_err() {
-                // `.err().unwrap()` rather than `.unwrap_err()` so that we don't introduce
-                // a `T: Debug` bound.
-                // Also, for an error type of ! any code after `err().unwrap()` is unreachable.
                 #[allow(unreachable_code)]
                 return __futures_crate::task::Poll::Ready(
                     __futures_crate::Err(
@@ -115,9 +112,6 @@ pub(crate) fn try_join(input: TokenStream) -> TokenStream {
     });
     let take_outputs = future_names.iter().map(|fut| {
         quote! {
-            // `.ok().unwrap()` rather than `.unwrap()` so that we don't introduce
-            // an `E: Debug` bound.
-            // Also, for an ok type of ! any code after `ok().unwrap()` is unreachable.
             #[allow(unreachable_code)]
             #fut.as_mut().take_output().unwrap().ok().unwrap(),
         }

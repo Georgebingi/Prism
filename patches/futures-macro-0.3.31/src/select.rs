@@ -152,12 +152,6 @@ fn select_inner(input: TokenStream, random: bool) -> TokenStream {
         .map(|(expr, variant_name)| {
             match expr {
                 syn::Expr::Path(path) => {
-                    // Don't bind futures that are already a path.
-                    // This prevents creating redundant stack space
-                    // for them.
-                    // Passing Futures by path requires those Futures to implement Unpin.
-                    // We check for this condition here in order to be able to
-                    // safely use Pin::new_unchecked(&mut #path) later on.
                     future_let_bindings.push(quote! {
                         __futures_crate::async_await::assert_fused_future(&#path);
                         __futures_crate::async_await::assert_unpin(&#path);
@@ -165,17 +159,6 @@ fn select_inner(input: TokenStream, random: bool) -> TokenStream {
                     path
                 }
                 _ => {
-                    // Bind and pin the resulting Future on the stack. This is
-                    // necessary to support direct select! calls on !Unpin
-                    // Futures. The Future is not explicitly pinned here with
-                    // a Pin call, but assumed as pinned. The actual Pin is
-                    // created inside the poll() function below to defer the
-                    // creation of the temporary pointer, which would otherwise
-                    // increase the size of the generated Future.
-                    // Safety: This is safe since the lifetime of the Future
-                    // is totally constraint to the lifetime of the select!
-                    // expression, and the Future can't get moved inside it
-                    // (it is shadowed).
                     future_let_bindings.push(quote! {
                         let mut #variant_name = #expr;
                     });
@@ -189,14 +172,6 @@ fn select_inner(input: TokenStream, random: bool) -> TokenStream {
     // to use for polling that individual future. These will then be put in an array.
     let poll_functions = bound_future_names.iter().zip(variant_names.iter()).map(
         |(bound_future_name, variant_name)| {
-            // Below we lazily create the Pin on the Future below.
-            // This is done in order to avoid allocating memory in the generator
-            // for the Pin variable.
-            // Safety: This is safe because one of the following condition applies:
-            // 1. The Future is passed by the caller by name, and we assert that
-            //    it implements Unpin.
-            // 2. The Future is created in scope of the select! function and will
-            //    not be moved for the duration of it. It is thereby stack-pinned
             quote! {
                 let mut #variant_name = |__cx: &mut __futures_crate::task::Context<'_>| {
                     let mut #bound_future_name = unsafe {
