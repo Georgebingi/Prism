@@ -59,6 +59,8 @@ enum Commands {
     Export(commands::export::ExportArgs),
     /// Manage the error taxonomy database.
     Db(commands::db::DbArgs),
+    /// Start WebSocket server for streaming trace updates.
+    Serve(commands::serve::ServeArgs),
 }
 
 #[tokio::main]
@@ -85,6 +87,7 @@ async fn main() -> anyhow::Result<()> {
         Commands::Whatif(args) => commands::whatif::run(args, &network, &cli.output).await?,
         Commands::Export(args) => commands::export::run(args, &network).await?,
         Commands::Db(args) => commands::db::run(args).await?,
+        Commands::Serve(args) => commands::serve::run(args, &network).await?,
     }
 
     Ok(())
